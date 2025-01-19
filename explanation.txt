@@ -1,0 +1,49 @@
+
+predownloaded datasets 
+
+1. manhattanWeatherClean.gz - weather of new york city
+2. Daily attendance of New York City Schools 
+	2A. daily attendance for years 2015-2018
+	2B. daily attendance for years 2018-2019
+3. demographics of New York City Schools listed by DBN (to figure out how many students are attending each school by grade) 
+
+scripts
+
+A. manhattanWeatherGrep.py - uses dataset 1. a python script that takes the temperature at 12pm for dates that occur between 2015 and 2019 and puts it into a new file called 
+manhattanWeather20152019.gz
+
+B. createAttendanceFile.awk - uses datasets 2A and 2B. an awk script that greps out the school district, total number of students in the class, and the number of students who left early each day from the school attendance databases. It also looks through the dates that shouldn't be counted for attendance purposes for various reasons and makes sure that those dates aren't included in the output of this script. outputs the DBN, date, number of students enrolled, and number of students released. This information is put into a file called 2015-2019_Daily_Attendance.gz
+
+A'. getSchoolType.awk - uses dataset 3 (the demographics) to determine what "type" of school each school is. Meaning, the school will be assigned an "L" if the school has elementary age students (K-5), "M" if the school has students in junior high (6-8) and "H" if the school has highschool age students (9-12). the type assigned goes based on if kids in the youngest of the grades (meaning Kindergarten, 6th grade, 9th grade) because if the school is newer it won't necessarily have kids in all of the grades. if necessary, multiple types are assigned to a school (but this doesn't seem to happen). outputs the school DBN, and type into a file called School_by_type.gz
+
+C. combineSchoolTypeAttendance.py - Uses the files created by scripts B, and A'. a python script which adds the type of school to the DBN. it outputs the schoolDBN + type, date, number of kids enrolled, and number of kids released. outputs this information into a file called 2015-2019_Daily_Attendance+type.gz
+
+D. replaceDateWithTempAddPercent.awk - uses the file created by C and dataset 1. an awk script which puts together the temperature of each date into an array. it also calculates the percentage of kids released / the number of kids enrolled. it outputs the schoolDBN, temperature, total kids enrolled, total kids released, percent of kids released into a file called 2015-2019_Temp_Attendance_Percent.gz
+
+
+
+A. Uses 1 and outputs for 2015 to 2019 
+      date | round(temperature) (choosing a time between 11 am and 1 pm)
+
+A'. Uses 3 and outputs
+    school/type
+	where type is "lower", "middle", "high"
+	
+B. uses 2 and outputs
+	school | date | enrolled | released |  percentage released
+
+C. uses A and B and outputs
+   for each school and tempBand:
+       school | intTemp | totalEnrolled | total released | % released 
+       	     key
+
+D. Uses C and outputs
+   intTemp| % released | school | type
+
+
+graph
+	x axis: temp
+	y axis: percent released
+	plot point: particular school
+
+
